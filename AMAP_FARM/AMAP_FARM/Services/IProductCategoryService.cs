@@ -4,10 +4,10 @@ namespace AMAP_FARM.Services
 {
     public interface IProductCategoryService
     {
-        // Get all categories asynchronously
-        Task<IEnumerable<ProductCategory>> GetAllProductCategoriesAsync();
-
-        // Create a new category asynchronously
-        Task<ProductCategory> CreateProductCategoryAsync(ProductCategory productCategory);
+        Task<List<ProductCategory>> GetAllCategoriesAsync();
+        Task<ProductCategory> GetCategoryByIdAsync(int categoryId);
+        Task CreateCategoryAsync(ProductCategory category);
+        Task UpdateCategoryAsync(ProductCategory category);
+        Task DeleteCategoryAsync(int categoryId);
     }
 }

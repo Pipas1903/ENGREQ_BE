@@ -13,14 +13,14 @@ public class ProductsController : ControllerBase
         _context = context;
     }
 
-    // GET: api/users
+    // GET
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
         return Ok(await _context.Products.ToListAsync());
     }
 
-    // POST: api/users
+    // POST
     [HttpPost]
     public async Task<IActionResult> CreateProduct(Product product)
     {

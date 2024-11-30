@@ -4,11 +4,11 @@ namespace AMAP_FARM.Services
 {
     public interface IProductService
     {
-        // Get all products asynchronously
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-
-        // Create a new product asynchronously
-        Task<Product> CreateProductAsync(Product product);
+        Task<List<Product>> GetAllProductsAsync();
+        Task<Product> GetProductByIdAsync(int productId);
+        Task CreateProductAsync(Product product);
+        Task UpdateProductAsync(Product product);
+        Task DeleteProductAsync(int productId);
     }
 }
 

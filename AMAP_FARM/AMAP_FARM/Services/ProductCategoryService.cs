@@ -1,33 +1,47 @@
 ﻿using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AMAP_FARM.Services
 {
     public class ProductCategoryService : IProductCategoryService
     {
-        private readonly AppDbContext _context;  // Updated to use DbContext
+        private readonly AppDbContext _context;
 
-        // Constructor to inject the DbContext
         public ProductCategoryService(AppDbContext context)
         {
             _context = context;
         }
 
-        // Method to get all product categories from the database
-        public async Task<IEnumerable<ProductCategory>> GetAllProductCategoriesAsync()
+        public async Task<List<ProductCategory>> GetAllCategoriesAsync()
         {
             return await _context.ProductCategories.ToListAsync();
         }
 
-        // Method to create a new product category
-        public async Task<ProductCategory> CreateProductCategoryAsync(ProductCategory productCategory)
+        public async Task<ProductCategory> GetCategoryByIdAsync(int categoryId)
         {
-            _context.ProductCategories.Add(productCategory);
+            return await _context.ProductCategories.FindAsync(categoryId);
+        }
+
+        public async Task CreateCategoryAsync(ProductCategory category)
+        {
+            _context.ProductCategories.Add(category);
             await _context.SaveChangesAsync();
-            return productCategory;
+        }
+
+        public async Task UpdateCategoryAsync(ProductCategory category)
+        {
+            _context.ProductCategories.Update(category);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteCategoryAsync(int categoryId)
+        {
+            var category = await _context.ProductCategories.FindAsync(categoryId);
+            if (category != null)
+            {
+                _context.ProductCategories.Remove(category);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
-

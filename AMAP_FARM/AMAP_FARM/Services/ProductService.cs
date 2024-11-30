@@ -7,25 +7,41 @@ namespace AMAP_FARM.Services
     {
         private readonly AppDbContext _context;
 
-        // Constructor to inject the DbContext
         public ProductService(AppDbContext context)
         {
             _context = context;
         }
 
-        // Method to get all products from the database, including product category information
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
-            return await _context.Products.Include(p => p.ProductCategoryId).ToListAsync();
+            return await _context.Products.ToListAsync();
         }
 
-        // Method to create a new product
-        public async Task<Product> CreateProductAsync(Product product)
+        public async Task<Product> GetProductByIdAsync(int productId)
+        {
+            return await _context.Products.FindAsync(productId);
+        }
+
+        public async Task CreateProductAsync(Product product)
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-            return product;
+        }
+
+        public async Task UpdateProductAsync(Product product)
+        {
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteProductAsync(int productId)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
-
