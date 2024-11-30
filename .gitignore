@@ -344,7 +344,6 @@ ASALocalRun/
 
 # MSBuild Binary and Structured Log
 *.binlog
-*.bin
 
 # NVidia Nsight GPU debugger configuration file
 *.nvuser
@@ -377,6 +376,7 @@ FodyWeavers.xsd
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+.vs/*
 
 # Local History for Visual Studio Code
 .history/
@@ -390,5 +390,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-
-*.v2
