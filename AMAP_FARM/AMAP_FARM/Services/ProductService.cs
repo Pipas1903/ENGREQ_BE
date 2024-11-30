@@ -1,15 +1,14 @@
 ﻿using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
-using DbContext = AMAP_FARM.Data.DbContext;
 
 namespace AMAP_FARM.Services
 {
     public class ProductService : IProductService
     {
-        private readonly DbContext _context;
+        private readonly AppDbContext _context;
 
         // Constructor to inject the DbContext
-        public ProductService(DbContext context)
+        public ProductService(AppDbContext context)
         {
             _context = context;
         }

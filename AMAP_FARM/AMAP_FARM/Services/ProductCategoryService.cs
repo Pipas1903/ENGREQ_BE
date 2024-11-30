@@ -2,16 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DbContext = AMAP_FARM.Data.DbContext;
 
 namespace AMAP_FARM.Services
 {
     public class ProductCategoryService : IProductCategoryService
     {
-        private readonly DbContext _context;  // Updated to use DbContext
+        private readonly AppDbContext _context;  // Updated to use DbContext
 
         // Constructor to inject the DbContext
-        public ProductCategoryService(DbContext context)
+        public ProductCategoryService(AppDbContext context)
         {
             _context = context;
         }

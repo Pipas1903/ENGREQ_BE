@@ -1,15 +1,14 @@
 using System;
 using AMAP_FARM.Services;
 using Microsoft.EntityFrameworkCore;
-using DbContext = AMAP_FARM.Data.DbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure DbContext to use MySQL
-builder.Services.AddDbContext<DbContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
