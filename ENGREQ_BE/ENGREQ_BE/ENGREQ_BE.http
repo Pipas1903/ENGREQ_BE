@@ -1,6 +1,0 @@
-@ENGREQ_BE_HostAddress = http://localhost:5019
-
-GET {{ENGREQ_BE_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
