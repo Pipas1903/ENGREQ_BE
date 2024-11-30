@@ -1,7 +1,5 @@
 ﻿using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AMAP_FARM.Services
 {

@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen();
 // Register services
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ISubscriptionPeriodService, SubscriptionPeriodService>();
 
 var app = builder.Build();
 
