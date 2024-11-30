@@ -11,7 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Producer> Producers { get; set; }
     public DbSet<Basket> Baskets { get; set; }
-
+    public DbSet<SubscriptionPeriod> SubscriptionPeriods { get; set; }
+    public DbSet<DeliveryDate> DeliveryDates { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
