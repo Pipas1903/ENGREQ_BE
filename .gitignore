@@ -47,3 +47,4 @@ node_modules/
 # Build results
 bin/
 obj/
+/ENGREQ_BE/.vs/ENGREQ_BE/FileContentIndex/d9465777-ccff-413b-86f1-cccc0be64580.vsidx
