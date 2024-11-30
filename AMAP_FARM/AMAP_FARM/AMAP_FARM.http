@@ -1,0 +1,6 @@
+@AMAP_FARM_HostAddress = http://localhost:5145
+
+GET {{AMAP_FARM_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
