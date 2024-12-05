@@ -21,43 +21,6 @@ namespace AMAP_FARM.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AMAP_FARM.Models.Basket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("ProducerId")
-                        .HasColumnType("int");
-
-                    b.PrimitiveCollection<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Stock")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Baskets");
-                });
-
             modelBuilder.Entity("AMAP_FARM.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -80,6 +43,9 @@ namespace AMAP_FARM.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ProductCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductTypeId")
                         .HasColumnType("int");
 
                     b.Property<double>("Stock")
@@ -116,6 +82,23 @@ namespace AMAP_FARM.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProductCategories");
+                });
+
+            modelBuilder.Entity("AMAP_FARM.Models.ProductType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductTypes");
                 });
 
             modelBuilder.Entity("AMAP_FARM.Models.Role", b =>
@@ -174,58 +157,6 @@ namespace AMAP_FARM.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("AMAP_FARM.Models.Producer", b =>
-                {
-                    b.HasBaseType("AMAP_FARM.Models.User");
-
-                    b.Property<string>("ContactNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FarmName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("Producers", (string)null);
-                });
-
-            modelBuilder.Entity("AMAP_FARM.Models.Product", b =>
-                {
-                    b.HasOne("AMAP_FARM.Models.Producer", null)
-                        .WithMany()
-                        .HasForeignKey("ProducerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AMAP_FARM.Models.ProductCategory", null)
-                        .WithMany()
-                        .HasForeignKey("ProductCategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AMAP_FARM.Models.User", b =>
-                {
-                    b.HasOne("AMAP_FARM.Models.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AMAP_FARM.Models.Producer", b =>
-                {
-                    b.HasOne("AMAP_FARM.Models.User", null)
-                        .WithOne()
-                        .HasForeignKey("AMAP_FARM.Models.Producer", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DeliveryDate", b =>
                 {
                     b.Property<int>("Id")
@@ -273,6 +204,64 @@ namespace AMAP_FARM.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SubscriptionPeriods");
+                });
+
+            modelBuilder.Entity("AMAP_FARM.Models.Producer", b =>
+                {
+                    b.HasBaseType("AMAP_FARM.Models.User");
+
+                    b.Property<string>("ContactNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FarmName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Producers", (string)null);
+                });
+
+            modelBuilder.Entity("AMAP_FARM.Models.Product", b =>
+                {
+                    b.HasOne("AMAP_FARM.Models.Producer", null)
+                        .WithMany()
+                        .HasForeignKey("ProducerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AMAP_FARM.Models.ProductCategory", null)
+                        .WithMany()
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AMAP_FARM.Models.ProductType", null)
+                        .WithMany()
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AMAP_FARM.Models.User", b =>
+                {
+                    b.HasOne("AMAP_FARM.Models.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AMAP_FARM.Models.Producer", b =>
+                {
+                    b.HasOne("AMAP_FARM.Models.User", null)
+                        .WithOne()
+                        .HasForeignKey("AMAP_FARM.Models.Producer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -9,8 +9,8 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<ProductType> ProductTypes { get; set; }
     public DbSet<Producer> Producers { get; set; }
-    public DbSet<Basket> Baskets { get; set; }
     public DbSet<SubscriptionPeriod> SubscriptionPeriods { get; set; }
     public DbSet<DeliveryDate> DeliveryDates { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,6 +36,12 @@ public class AppDbContext : DbContext
                 .HasOne<Producer>()
                 .WithMany()
                 .HasForeignKey(u => u.ProducerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Product>()
+                .HasOne<ProductType>()
+                .WithMany()
+                .HasForeignKey(u => u.ProductCategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
     }
 }

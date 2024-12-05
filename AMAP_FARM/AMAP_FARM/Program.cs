@@ -19,9 +19,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProducerService, ProducerService>();
-builder.Services.AddScoped<IBasketService, BasketService>();
 builder.Services.AddScoped<ISubscriptionPeriodService, SubscriptionPeriodService>();
 
 var app = builder.Build();
