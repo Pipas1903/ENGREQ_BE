@@ -1,6 +1,6 @@
 ﻿namespace AMAP_FARM.DTO
 {
-    public class ProductTypeDto
+    public class ProductTypeCreateDto
     {
         public required string Name { get; set; }
     }

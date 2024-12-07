@@ -1,6 +1,6 @@
 ﻿namespace AMAP_FARM.DTO
 {
-    public class UserDto
+    public class UserCreateDto
     {
         public required string Username { get; set; }
         public required string Email { get; set; }

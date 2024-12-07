@@ -1,3 +1,4 @@
+using AMAP_FARM.DTO;
 using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,10 @@ public class AppDbContext : DbContext
     public DbSet<Producer> Producers { get; set; }
     public DbSet<SubscriptionPeriod> SubscriptionPeriods { get; set; }
     public DbSet<DeliveryDate> DeliveryDates { get; set; }
+    public DbSet<PaymentMethod> PaymentMethods { get; set; }
+    public DbSet<Fractionation> Fractionations { get; set; }
+    public DbSet<Offer> Offers { get; set; }
+    public DbSet<OfferItem> OfferItems { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

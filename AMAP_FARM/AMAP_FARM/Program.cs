@@ -23,6 +23,9 @@ builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProducerService, ProducerService>();
 builder.Services.AddScoped<ISubscriptionPeriodService, SubscriptionPeriodService>();
+builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddScoped<IFractionationService, FractionationService>();
+//builder.Services.AddScoped<IOfferService, OfferService>();
 
 var app = builder.Build();
 
