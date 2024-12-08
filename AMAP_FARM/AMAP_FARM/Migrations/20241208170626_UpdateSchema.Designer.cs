@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMAP_FARM.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241208021149_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241208170626_UpdateSchema")]
+    partial class UpdateSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,8 +32,13 @@ namespace AMAP_FARM.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("OfferId")
-                        .HasColumnType("int");
+                    b.Property<string>("DeliveryDates")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OfferId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Price")
                         .HasColumnType("real");
@@ -48,8 +53,6 @@ namespace AMAP_FARM.Migrations
                         .HasColumnType("real");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OfferId");
 
                     b.ToTable("OfferItems");
                 });
@@ -104,6 +107,10 @@ namespace AMAP_FARM.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FractionationId")
                         .HasColumnType("int");
@@ -401,6 +408,9 @@ namespace AMAP_FARM.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ExternalId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -411,15 +421,6 @@ namespace AMAP_FARM.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SubscriptionPeriods");
-                });
-
-            modelBuilder.Entity("AMAP_FARM.DTO.OfferItem", b =>
-                {
-                    b.HasOne("AMAP_FARM.Models.Offer", null)
-                        .WithMany()
-                        .HasForeignKey("OfferId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("AMAP_FARM.Models.CoProducer", b =>

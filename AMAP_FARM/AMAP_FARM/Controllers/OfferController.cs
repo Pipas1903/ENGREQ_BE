@@ -22,7 +22,7 @@ namespace AMAP_FARM.Controllers
         public async Task<ActionResult<OfferDto>> CreateOffer([FromBody] OfferDto offerDto)
         {
             var createdOfferDto = await _offerService.CreateOfferAsync(offerDto);
-            return CreatedAtAction(nameof(GetOffer), new { id = createdOfferDto.Id }, createdOfferDto);
+            return Ok(createdOfferDto);
         }
 
         // GET: api/offer/{id}

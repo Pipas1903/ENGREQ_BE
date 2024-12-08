@@ -79,12 +79,6 @@ public class AppDbContext : DbContext
             .HasForeignKey(oi => oi.FractionationId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<OfferItem>()
-            .HasOne<Offer>()
-            .WithMany()
-            .HasForeignKey(oi => oi.OfferId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         modelBuilder.Entity<SubscribeOffer>()
             .HasOne<CoProducer>()
             .WithMany()

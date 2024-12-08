@@ -16,11 +16,23 @@ public class SubscriptionPeriodService : ISubscriptionPeriodService
                              .ToListAsync();
     }
 
+    public async Task<List<DeliveryDate>> GetDeliveryDatesBySubscriptionIdAsync(int subscriptionId)
+    {
+        return await _context.DeliveryDates
+                       .Where(dd => dd.SubscriptionPeriodId == subscriptionId)
+                       .ToListAsync();
+    }
+
     // Create a new SubscriptionPeriod
     public async Task<SubscriptionPeriod> CreateSubscriptionPeriodAsync(SubscriptionPeriod subscriptionPeriod, List<DateTime> deliveryDates)
     {
+        
+
         // Save the SubscriptionPeriod
-        _context.SubscriptionPeriods.Add(subscriptionPeriod);
+        
+        
+        
+       _context.SubscriptionPeriods.Add(subscriptionPeriod);
 
         // Save all DeliveryDates for this SubscriptionPeriod
         foreach (var date in deliveryDates)
@@ -28,13 +40,12 @@ public class SubscriptionPeriodService : ISubscriptionPeriodService
             var deliveryDate = new DeliveryDate();
 
             deliveryDate.Date = date;
-            deliveryDate.SubscriptionPeriodId = subscriptionPeriod.Id;
+            deliveryDate.SubscriptionPeriodId = subscriptionPeriod.ExternalId;
             _context.DeliveryDates.Add(deliveryDate);
         }
 
         // Save changes to the database
         await _context.SaveChangesAsync();
-
         return subscriptionPeriod;
     }
 

@@ -15,8 +15,10 @@ namespace AMAP_FARM.Services
 
         public async Task<OfferDto> CreateOfferAsync(OfferDto offerDto)
         {
+            var offerGuid = Guid.NewGuid().ToString();
             var offer = new Offer
             {
+                ExternalId = offerGuid,
                 SubscriptionPeriodId = offerDto.SubscriptionPeriodId,
                 PaymentMethodId = offerDto.PaymentMethodId,
                 FractionationId = offerDto.FractionationId
@@ -27,11 +29,12 @@ namespace AMAP_FARM.Services
 
             var offerItems = offerDto.OfferItems.Select(item => new OfferItem
             {
-                OfferId = offer.Id,
+                OfferId = offerGuid,
                 ProductId = item.ProductId,
                 Price = item.Price,
                 SaleQuantity = item.SaleQuantity,
-                SoldQuantity = item.SoldQuantity
+                SoldQuantity = item.SoldQuantity,
+                DeliveryDates = item.DeliveryDates
             }).ToList();
 
             _context.OfferItems.AddRange(offerItems);
@@ -39,18 +42,17 @@ namespace AMAP_FARM.Services
 
             return new OfferDto
             {
-                Id = offer.Id,
                 SubscriptionPeriodId = offer.SubscriptionPeriodId,
                 PaymentMethodId = offer.PaymentMethodId,
                 FractionationId = offer.FractionationId,
-                OfferItems = offerItems.Select(item => new OfferItem
+                OfferItems = offerItems.Select(item => new OfferItemDTO
                 {
-                    Id = item.Id,
                     OfferId = item.OfferId,
                     ProductId = item.ProductId,
                     Price = item.Price,
                     SaleQuantity = item.SaleQuantity,
-                    SoldQuantity = item.SoldQuantity
+                    SoldQuantity = item.SoldQuantity,
+                    DeliveryDates = item.DeliveryDates
                 }).ToList()
             };
         }
@@ -67,18 +69,16 @@ namespace AMAP_FARM.Services
             }
 
             var offerItems = await _context.OfferItems
-                .Where(oi => oi.OfferId == id)
+                .Where(oi => oi.OfferId == offer.ExternalId)
                 .ToListAsync();
 
             return new OfferDto
             {
-                Id = offer.Id,
                 SubscriptionPeriodId = offer.SubscriptionPeriodId,
                 PaymentMethodId = offer.PaymentMethodId,
                 FractionationId = offer.FractionationId,
-                OfferItems = offerItems.Select(item => new OfferItem
+                OfferItems = offerItems.Select(item => new OfferItemDTO
                 {
-                    Id = item.Id,
                     OfferId = item.OfferId,
                     ProductId = item.ProductId,
                     Price = item.Price,
@@ -98,18 +98,16 @@ namespace AMAP_FARM.Services
             foreach (var offer in offers)
             {
                 var offerItems = await _context.OfferItems
-                    .Where(oi => oi.OfferId == offer.Id)
+                    .Where(oi => oi.OfferId == offer.ExternalId)
                     .ToListAsync();
 
                 offerDtos.Add(new OfferDto
                 {
-                    Id = offer.Id,
                     SubscriptionPeriodId = offer.SubscriptionPeriodId,
                     PaymentMethodId = offer.PaymentMethodId,
                     FractionationId = offer.FractionationId,
-                    OfferItems = offerItems.Select(item => new OfferItem
+                    OfferItems = offerItems.Select(item => new OfferItemDTO
                     {
-                        Id = item.Id,
                         OfferId = item.OfferId,
                         ProductId = item.ProductId,
                         Price = item.Price,
@@ -139,11 +137,11 @@ namespace AMAP_FARM.Services
 
             _context.Offers.Update(offer);
 
-            _context.OfferItems.RemoveRange(_context.OfferItems.Where(oi => oi.OfferId == offer.Id));
+            _context.OfferItems.RemoveRange(_context.OfferItems.Where(oi => oi.OfferId == offer.ExternalId));
 
             var offerItems = offerDto.OfferItems.Select(item => new OfferItem
             {
-                OfferId = offer.Id,
+                OfferId = offer.ExternalId,
                 ProductId = item.ProductId,
                 Price = item.Price,
                 SaleQuantity = item.SaleQuantity,
@@ -155,13 +153,11 @@ namespace AMAP_FARM.Services
 
             return new OfferDto
             {
-                Id = offer.Id,
                 SubscriptionPeriodId = offer.SubscriptionPeriodId,
                 PaymentMethodId = offer.PaymentMethodId,
                 FractionationId = offer.FractionationId,
-                OfferItems = offerItems.Select(item => new OfferItem
+                OfferItems = offerItems.Select(item => new OfferItemDTO
                 {
-                    Id = item.Id,
                     OfferId = item.OfferId,
                     ProductId = item.ProductId,
                     Price = item.Price,
@@ -182,7 +178,7 @@ namespace AMAP_FARM.Services
                 return false;
             }
 
-            _context.OfferItems.RemoveRange(_context.OfferItems.Where(oi => oi.OfferId == offer.Id));
+            _context.OfferItems.RemoveRange(_context.OfferItems.Where(oi => oi.OfferId == offer.ExternalId));
 
             _context.Offers.Remove(offer);
             await _context.SaveChangesAsync();

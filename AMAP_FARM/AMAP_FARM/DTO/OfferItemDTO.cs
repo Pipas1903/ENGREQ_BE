@@ -1,8 +1,7 @@
-﻿namespace AMAP_FARM.DTO
+namespace AMAP_FARM.DTO
 {
-    public class OfferItem
+    public class OfferItemDTO
     {
-        public int Id { get; set; }
         public required string OfferId { get; set; }
         public required int ProductId { get; set; }
         public required float Price { get; set; }

@@ -66,5 +66,10 @@ namespace AMAP_FARM.Services
 
             return true;
         }
+
+        public Task<ProductCategory> CreateProductCategoryAsync(ProductCategory productCategory)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

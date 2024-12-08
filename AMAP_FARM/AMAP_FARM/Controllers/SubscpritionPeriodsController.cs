@@ -15,11 +15,22 @@ public class SubscriptionPeriodsController : ControllerBase
 
     // GET api/subscriptionperiods
     [HttpGet]
+
     public async Task<ActionResult<List<SubscriptionPeriod>>> GetAllSubscriptionPeriods()
     {
         var subscriptionPeriods = await _subscriptionPeriodService.GetAllSubscriptionPeriodsAsync();
         return Ok(subscriptionPeriods);
     }
+
+    // GET api/deliveryDates
+    [HttpGet("{subscriptionId}")]
+
+    public async Task<ActionResult<List<SubscriptionPeriod>>> GetDeliveryDatesBySubscription(int subscriptionId)
+    {
+        var subscriptionPeriods = await _subscriptionPeriodService.GetDeliveryDatesBySubscriptionIdAsync(subscriptionId);
+        return Ok(subscriptionPeriods);
+    }
+
 
     // POST api/subscriptionperiods
     [HttpPost]
@@ -29,10 +40,12 @@ public class SubscriptionPeriodsController : ControllerBase
         {
             return BadRequest("Invalid subscription period data.");
         }
+        var random = new Random();
 
         // Convert the DTO to SubscriptionPeriod
         var subscriptionPeriod = new SubscriptionPeriod
         {
+            ExternalId = random.Next(1, 1000000),
             Name = dto.Name,
             Duration = dto.Duration,
             StartDate = dto.StartDate,

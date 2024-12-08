@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore.Update.Internal;
+
 public class CreateSubscriptionPeriodDto
 {
+    public int ExternalId { get; set; } // Primary Key
     public string Name { get; set; }
     public string Duration { get; set; }
     public DateTime StartDate { get; set; }
