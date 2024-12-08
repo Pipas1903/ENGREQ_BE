@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AMAP_FARM.DTO;
 using AMAP_FARM.Models;
-using Microsoft.EntityFrameworkCore;
+using AMAP_FARM.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AMAP_FARM.Controllers
 {
@@ -8,27 +9,18 @@ namespace AMAP_FARM.Controllers
     [ApiController]
     public class ProducerController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IProducerService _producerService;
 
-        // Constructor to inject AppDbContext
-        public ProducerController(AppDbContext context)
+        public ProducerController(IProducerService producerService)
         {
-            _context = context;
+            _producerService = producerService;
         }
 
-        // GET: api/Producer
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Producer>>> GetProducers()
+        // GET: api/Producer/{userId}
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<Producer>> GetProducer(int userId)
         {
-            var producers = await _context.Producers.ToListAsync();
-            return Ok(producers);
-        }
-
-        // GET: api/Producer/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Producer>> GetProducer(int id)
-        {
-            var producer = await _context.Producers.FindAsync(id);
+            var producer = await _producerService.GetProducerByUserIdAsync(userId);
 
             if (producer == null)
             {
@@ -40,80 +32,39 @@ namespace AMAP_FARM.Controllers
 
         // POST: api/Producer
         [HttpPost]
-        public async Task<ActionResult<Producer>> CreateProducer(Producer producer)
+        public async Task<ActionResult<Producer>> CreateProducer(ProducerCreateDto producerDto)
         {
-            // Ensure that RoleId and other required properties are set correctly
-            if (producer == null)
-            {
-                return BadRequest("Producer data is invalid.");
-            }
+            var producer = await _producerService.CreateProducerAsync(producerDto);
 
-            // Set any additional logic or validation here
-
-            // Add the new producer to the context
-            _context.Producers.Add(producer);
-
-            try
-            {
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                // Handle potential database errors (e.g., duplicate emails, etc.)
-                return StatusCode(500, "Internal server error while creating producer.");
-            }
-
-            return CreatedAtAction(nameof(GetProducer), new { id = producer.Id }, producer);
+            return CreatedAtAction(nameof(GetProducer), new { userId = producer.UserId }, producer);
         }
 
-        // PUT: api/Producer/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProducer(int id, Producer producer)
+        // PUT: api/Producer/{userId}
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateProducer(int userId, ProducerUpdateDto producerUpdateDto)
         {
-            if (id != producer.Id)
-            {
-                return BadRequest("Producer ID mismatch.");
-            }
+            var updatedProducer = await _producerService.UpdateProducerAsync(userId, producerUpdateDto);
 
-            // Ensure producer exists before updating
-            var existingProducer = await _context.Producers.FindAsync(id);
-            if (existingProducer == null)
+            if (updatedProducer == null)
             {
                 return NotFound();
             }
 
-            // Update the properties (you can add any custom validation or logic here)
-            existingProducer.FarmName = producer.FarmName;
-            existingProducer.Location = producer.Location;
-            existingProducer.ContactNumber = producer.ContactNumber;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return StatusCode(500, "Internal server error while updating producer.");
-            }
-
-            return NoContent(); // Return status code 204 if successful
+            return NoContent();
         }
 
-        // DELETE: api/Producer/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProducer(int id)
+        // DELETE: api/Producer/{userId}
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteProducer(int userId)
         {
-            var producer = await _context.Producers.FindAsync(id);
-            if (producer == null)
+            var success = await _producerService.DeleteProducerAsync(userId);
+
+            if (!success)
             {
                 return NotFound();
             }
 
-            _context.Producers.Remove(producer);
-            await _context.SaveChangesAsync();
-
-            return NoContent(); // Return status code 204 for successful deletion
+            return NoContent();
         }
     }
 }

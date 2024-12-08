@@ -1,10 +1,6 @@
 ﻿using AMAP_FARM.DTO;
 using AMAP_FARM.Models;
-using AMAP_FARM.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AMAP_FARM.Services
 {
@@ -17,10 +13,8 @@ namespace AMAP_FARM.Services
             _context = context;
         }
 
-        // Criar uma nova oferta com os OfferItems
         public async Task<OfferDto> CreateOfferAsync(OfferDto offerDto)
         {
-
             var offer = new Offer
             {
                 SubscriptionPeriodId = offerDto.SubscriptionPeriodId,
@@ -43,7 +37,7 @@ namespace AMAP_FARM.Services
             _context.OfferItems.AddRange(offerItems);
             await _context.SaveChangesAsync();
 
-            var createdOfferDto = new OfferDto
+            return new OfferDto
             {
                 Id = offer.Id,
                 SubscriptionPeriodId = offer.SubscriptionPeriodId,
@@ -59,14 +53,12 @@ namespace AMAP_FARM.Services
                     SoldQuantity = item.SoldQuantity
                 }).ToList()
             };
-
-            return createdOfferDto;
         }
+
 
         public async Task<OfferDto> GetOfferByIdAsync(int id)
         {
             var offer = await _context.Offers
-                .Include(o => o.OfferItems)  // Inclui os itens da oferta
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (offer == null)
@@ -74,13 +66,17 @@ namespace AMAP_FARM.Services
                 return null;
             }
 
+            var offerItems = await _context.OfferItems
+                .Where(oi => oi.OfferId == id)
+                .ToListAsync();
+
             return new OfferDto
             {
                 Id = offer.Id,
                 SubscriptionPeriodId = offer.SubscriptionPeriodId,
                 PaymentMethodId = offer.PaymentMethodId,
                 FractionationId = offer.FractionationId,
-                OfferItems = offer.OfferItems.Select(item => new OfferItem
+                OfferItems = offerItems.Select(item => new OfferItem
                 {
                     Id = item.Id,
                     OfferId = item.OfferId,
@@ -92,34 +88,44 @@ namespace AMAP_FARM.Services
             };
         }
 
+
         public async Task<List<OfferDto>> GetAllOffersAsync()
         {
-            var offers = await _context.Offers
-                .Include(o => o.OfferItems)
-                .ToListAsync();
+            var offers = await _context.Offers.ToListAsync();
 
-            return offers.Select(offer => new OfferDto
+            var offerDtos = new List<OfferDto>();
+
+            foreach (var offer in offers)
             {
-                Id = offer.Id,
-                SubscriptionPeriodId = offer.SubscriptionPeriodId,
-                PaymentMethodId = offer.PaymentMethodId,
-                FractionationId = offer.FractionationId,
-                OfferItems = offer.OfferItems.Select(item => new OfferItem
+                var offerItems = await _context.OfferItems
+                    .Where(oi => oi.OfferId == offer.Id)
+                    .ToListAsync();
+
+                offerDtos.Add(new OfferDto
                 {
-                    Id = item.Id,
-                    OfferId = item.OfferId,
-                    ProductId = item.ProductId,
-                    Price = item.Price,
-                    SaleQuantity = item.SaleQuantity,
-                    SoldQuantity = item.SoldQuantity
-                }).ToList()
-            }).ToList();
+                    Id = offer.Id,
+                    SubscriptionPeriodId = offer.SubscriptionPeriodId,
+                    PaymentMethodId = offer.PaymentMethodId,
+                    FractionationId = offer.FractionationId,
+                    OfferItems = offerItems.Select(item => new OfferItem
+                    {
+                        Id = item.Id,
+                        OfferId = item.OfferId,
+                        ProductId = item.ProductId,
+                        Price = item.Price,
+                        SaleQuantity = item.SaleQuantity,
+                        SoldQuantity = item.SoldQuantity
+                    }).ToList()
+                });
+            }
+
+            return offerDtos;
         }
+
 
         public async Task<OfferDto> UpdateOfferAsync(int id, OfferDto offerDto)
         {
             var offer = await _context.Offers
-                .Include(o => o.OfferItems)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (offer == null)
@@ -133,7 +139,7 @@ namespace AMAP_FARM.Services
 
             _context.Offers.Update(offer);
 
-            _context.OfferItems.RemoveRange(offer.OfferItems);
+            _context.OfferItems.RemoveRange(_context.OfferItems.Where(oi => oi.OfferId == offer.Id));
 
             var offerItems = offerDto.OfferItems.Select(item => new OfferItem
             {
@@ -165,10 +171,10 @@ namespace AMAP_FARM.Services
             };
         }
 
+
         public async Task<bool> DeleteOfferAsync(int id)
         {
             var offer = await _context.Offers
-                .Include(o => o.OfferItems)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (offer == null)
@@ -176,7 +182,7 @@ namespace AMAP_FARM.Services
                 return false;
             }
 
-            _context.OfferItems.RemoveRange(offer.OfferItems);
+            _context.OfferItems.RemoveRange(_context.OfferItems.Where(oi => oi.OfferId == offer.Id));
 
             _context.Offers.Remove(offer);
             await _context.SaveChangesAsync();

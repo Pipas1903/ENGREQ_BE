@@ -1,4 +1,5 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMAP_FARM.Services
@@ -12,36 +13,56 @@ namespace AMAP_FARM.Services
             _context = context;
         }
 
-        public async Task<List<Role>> GetAllRolesAsync()
+        public async Task<IEnumerable<Role>> GetAllRolesAsync()
         {
             return await _context.Roles.ToListAsync();
         }
 
-        public async Task<Role> GetRoleByIdAsync(int roleId)
+        public async Task<Role> GetRoleByIdAsync(int id)
         {
-            return await _context.Roles.FindAsync(roleId);
+            return await _context.Roles.FindAsync(id);
         }
 
-        public async Task CreateRoleAsync(Role role)
+        public async Task<Role> CreateRoleAsync(RoleCreateDto roleCreateDto)
         {
+            var role = new Role
+            {
+                Description = roleCreateDto.Description
+            };
+
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
+
+            return role;
         }
 
-        public async Task UpdateRoleAsync(Role role)
+        public async Task<bool> UpdateRoleAsync(int id, Role role)
         {
-            _context.Roles.Update(role);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteRoleAsync(int roleId)
-        {
-            var role = await _context.Roles.FindAsync(roleId);
-            if (role != null)
+            var existingRole = await _context.Roles.FindAsync(id);
+            if (existingRole == null)
             {
-                _context.Roles.Remove(role);
-                await _context.SaveChangesAsync();
+                return false;
             }
+
+            existingRole.Description = role.Description;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeleteRoleAsync(int id)
+        {
+            var role = await _context.Roles.FindAsync(id);
+            if (role == null)
+            {
+                return false;
+            }
+
+            _context.Roles.Remove(role);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

@@ -2,12 +2,13 @@
 {
     public class ProductCreateDto
     {
-        public int ProductCategoryId { get; set; }
+        public required int ProductCategoryId { get; set; }
+        public required int ProductTypeId { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
-        public double Price { get; set; }
-        public double Stock { get; set; }
+        public required double Price { get; set; }
+        public required double Stock { get; set; }
         public required string Unit { get; set; }
-        public int ProducerId { get; set; }
+        public required int ProducerId { get; set; }
     }
 }

@@ -1,13 +1,14 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 
 namespace AMAP_FARM.Services
 {
     public interface IFractionationService
     {
-        Task<List<Fractionation>> GetAllFractionationsAsync();
-        Task<Fractionation> GetFractionationByIdAsync(int fractionationId);
-        Task CreateFractionationAsync(Fractionation fractionation);
-        Task UpdateFractionationAsync(Fractionation fractionation);
-        Task DeleteFractionationAsync(int fractionationId);
+        Task<IEnumerable<Fractionation>> GetAllFractionationsAsync();
+        Task<Fractionation> GetFractionationByIdAsync(int id);
+        Task<Fractionation> CreateFractionationAsync(FractionationCreateDto fractionationCreateDto);
+        Task<bool> UpdateFractionationAsync(int id, Fractionation fractionation);
+        Task<bool> DeleteFractionationAsync(int id);
     }
 }

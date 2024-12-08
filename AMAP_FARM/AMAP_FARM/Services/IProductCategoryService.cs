@@ -1,13 +1,14 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 
 namespace AMAP_FARM.Services
 {
     public interface IProductCategoryService
     {
-        Task<List<ProductCategory>> GetAllCategoriesAsync();
-        Task<ProductCategory> GetCategoryByIdAsync(int categoryId);
-        Task CreateCategoryAsync(ProductCategory category);
-        Task UpdateCategoryAsync(ProductCategory category);
-        Task DeleteCategoryAsync(int categoryId);
+        Task<IEnumerable<ProductCategory>> GetAllProductCategoriesAsync();
+        Task<ProductCategory> GetProductCategoryByIdAsync(int id);
+        Task<ProductCategory> CreateProductCategoryAsync(ProductCategoryCreateDto productCategoryCreateDto);
+        Task<bool> UpdateProductCategoryAsync(int id, ProductCategory productCategory);
+        Task<bool> DeleteProductCategoryAsync(int id);
     }
 }

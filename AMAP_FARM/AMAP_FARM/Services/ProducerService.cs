@@ -1,4 +1,5 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMAP_FARM.Services
@@ -12,36 +13,99 @@ namespace AMAP_FARM.Services
             _context = context;
         }
 
-        public async Task<List<Producer>> GetAllProducersAsync()
+        public async Task<Producer> GetProducerByUserIdAsync(int userId)
         {
-            return await _context.Producers.ToListAsync();
+            var producer = await _context.Producers
+                .FirstOrDefaultAsync(p => p.Id == userId);
+
+            return producer;
         }
 
-        public async Task<Producer> GetProducerByIdAsync(int producerId)
+        public async Task<Producer> CreateProducerAsync(ProducerCreateDto producerDto)
         {
-            return await _context.Producers.FindAsync(producerId);
-        }
+            var user = new User
+            {
+                Username = producerDto.Username,
+                Email = producerDto.Email,
+                PasswordHash = producerDto.PasswordHash,
+                FullName = producerDto.FullName,
+                DateOfBirth = producerDto.DateOfBirth,
+                RoleId = producerDto.RoleId
+            };
 
-        public async Task CreateProducerAsync(Producer producer)
-        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var producer = new Producer
+            {
+                UserId = user.Id,
+                FarmName = producerDto.FarmName,
+                Location = producerDto.Location,
+                ContactNumber = producerDto.ContactNumber
+            };
+
             _context.Producers.Add(producer);
             await _context.SaveChangesAsync();
+
+            return producer;
         }
 
-        public async Task UpdateProducerAsync(Producer producer)
+        public async Task<Producer> UpdateProducerAsync(int userId, ProducerUpdateDto producerUpdateDto)
         {
-            _context.Producers.Update(producer);
-            await _context.SaveChangesAsync();
-        }
+            var producer = await _context.Producers
+                .FirstOrDefaultAsync(p => p.Id == userId);
 
-        public async Task DeleteProducerAsync(int producerId)
-        {
-            var producer = await _context.Producers.FindAsync(producerId);
-            if (producer != null)
+            if (producer == null)
             {
-                _context.Producers.Remove(producer);
-                await _context.SaveChangesAsync();
+                return null;
             }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.FullName = producerUpdateDto.FullName ?? user.FullName;
+
+            producer.FarmName = producerUpdateDto.FarmName ?? producer.FarmName;
+            producer.Location = producerUpdateDto.Location ?? producer.Location;
+            producer.ContactNumber = producerUpdateDto.ContactNumber ?? producer.ContactNumber;
+
+            _context.Users.Update(user);
+            _context.Producers.Update(producer);
+
+            await _context.SaveChangesAsync();
+
+            return producer;
+        }
+
+        public async Task<bool> DeleteProducerAsync(int userId)
+        {
+            var producer = await _context.Producers
+                .FirstOrDefaultAsync(p => p.Id == userId);
+
+            if (producer == null)
+            {
+                return false;
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            _context.Producers.Remove(producer);
+            _context.Users.Remove(user);
+
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

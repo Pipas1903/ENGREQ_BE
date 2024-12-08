@@ -1,14 +1,14 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 
 namespace AMAP_FARM.Services
 {
     public interface IPaymentMethodService
     {
-        Task<List<PaymentMethod>> GetAllPaymentMethodsAsync();
-        Task<PaymentMethod> GetPaymentMethodByIdAsync(int paymentMethodId);
-        Task CreatePaymentMethodAsync(PaymentMethod paymentMethod);
-        Task UpdatePaymentMethodAsync(PaymentMethod paymentMethod);
-        Task DeletePaymentMethodAsync(int paymentMethodId);
+        Task<IEnumerable<PaymentMethod>> GetAllPaymentMethodsAsync();
+        Task<PaymentMethod> GetPaymentMethodByIdAsync(int id);
+        Task<PaymentMethod> CreatePaymentMethodAsync(PaymentMethodCreateDto paymentMethodCreateDto);
+        Task<bool> UpdatePaymentMethodAsync(int id, PaymentMethod paymentMethod);
+        Task<bool> DeletePaymentMethodAsync(int id);
     }
 }
-

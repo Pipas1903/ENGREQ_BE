@@ -1,4 +1,5 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMAP_FARM.Services
@@ -12,40 +13,56 @@ namespace AMAP_FARM.Services
             _context = context;
         }
 
-        public async Task<List<PaymentMethod>> GetAllPaymentMethodsAsync()
+        public async Task<IEnumerable<PaymentMethod>> GetAllPaymentMethodsAsync()
         {
             return await _context.PaymentMethods.ToListAsync();
         }
 
-        public async Task<PaymentMethod> GetPaymentMethodByIdAsync(int paymentMethodId)
+        public async Task<PaymentMethod> GetPaymentMethodByIdAsync(int id)
         {
-            return await _context.PaymentMethods
-                .FirstOrDefaultAsync(pm => pm.Id == paymentMethodId);
+            return await _context.PaymentMethods.FindAsync(id);
         }
 
-        public async Task CreatePaymentMethodAsync(PaymentMethod paymentMethod)
+        public async Task<PaymentMethod> CreatePaymentMethodAsync(PaymentMethodCreateDto paymentMethodCreateDto)
         {
-            await _context.PaymentMethods.AddAsync(paymentMethod);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdatePaymentMethodAsync(PaymentMethod paymentMethod)
-        {
-            _context.PaymentMethods.Update(paymentMethod);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeletePaymentMethodAsync(int paymentMethodId)
-        {
-            var paymentMethod = await _context.PaymentMethods
-                .FirstOrDefaultAsync(pm => pm.Id == paymentMethodId);
-
-            if (paymentMethod != null)
+            var paymentMethod = new PaymentMethod
             {
-                _context.PaymentMethods.Remove(paymentMethod);
-                await _context.SaveChangesAsync();
+                Name = paymentMethodCreateDto.Name
+            };
+
+            _context.PaymentMethods.Add(paymentMethod);
+            await _context.SaveChangesAsync();
+
+            return paymentMethod;
+        }
+
+        public async Task<bool> UpdatePaymentMethodAsync(int id, PaymentMethod paymentMethod)
+        {
+            var existingPaymentMethod = await _context.PaymentMethods.FindAsync(id);
+            if (existingPaymentMethod == null)
+            {
+                return false;
             }
+
+            existingPaymentMethod.Name = paymentMethod.Name;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeletePaymentMethodAsync(int id)
+        {
+            var paymentMethod = await _context.PaymentMethods.FindAsync(id);
+            if (paymentMethod == null)
+            {
+                return false;
+            }
+
+            _context.PaymentMethods.Remove(paymentMethod);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }
-

@@ -1,4 +1,5 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMAP_FARM.Services
@@ -12,36 +13,58 @@ namespace AMAP_FARM.Services
             _context = context;
         }
 
-        public async Task<List<ProductCategory>> GetAllCategoriesAsync()
+        public async Task<IEnumerable<ProductCategory>> GetAllProductCategoriesAsync()
         {
             return await _context.ProductCategories.ToListAsync();
         }
 
-        public async Task<ProductCategory> GetCategoryByIdAsync(int categoryId)
+        public async Task<ProductCategory> GetProductCategoryByIdAsync(int id)
         {
-            return await _context.ProductCategories.FindAsync(categoryId);
+            return await _context.ProductCategories.FindAsync(id);
         }
 
-        public async Task CreateCategoryAsync(ProductCategory category)
+        public async Task<ProductCategory> CreateProductCategoryAsync(ProductCategoryCreateDto productCategoryCreateDto)
         {
-            _context.ProductCategories.Add(category);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateCategoryAsync(ProductCategory category)
-        {
-            _context.ProductCategories.Update(category);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteCategoryAsync(int categoryId)
-        {
-            var category = await _context.ProductCategories.FindAsync(categoryId);
-            if (category != null)
+            var productCategory = new ProductCategory
             {
-                _context.ProductCategories.Remove(category);
-                await _context.SaveChangesAsync();
+                Name = productCategoryCreateDto.Name,
+                Description = productCategoryCreateDto.Description
+            };
+
+            _context.ProductCategories.Add(productCategory);
+            await _context.SaveChangesAsync();
+
+            return productCategory;
+        }
+
+        public async Task<bool> UpdateProductCategoryAsync(int id, ProductCategory productCategory)
+        {
+            var existingProductCategory = await _context.ProductCategories.FindAsync(id);
+            if (existingProductCategory == null)
+            {
+                return false;
             }
+
+            existingProductCategory.Name = productCategory.Name;
+            existingProductCategory.Description = productCategory.Description;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeleteProductCategoryAsync(int id)
+        {
+            var productCategory = await _context.ProductCategories.FindAsync(id);
+            if (productCategory == null)
+            {
+                return false;
+            }
+
+            _context.ProductCategories.Remove(productCategory);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

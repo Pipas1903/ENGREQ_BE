@@ -1,14 +1,14 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 
 namespace AMAP_FARM.Services
 {
     public interface IProductService
     {
+        Task<Product> CreateProductAsync(ProductCreateDto productDto);
+        Task<Product> GetProductByIdAsync(int id);
         Task<List<Product>> GetAllProductsAsync();
-        Task<Product> GetProductByIdAsync(int productId);
-        Task CreateProductAsync(Product product);
-        Task UpdateProductAsync(Product product);
-        Task DeleteProductAsync(int productId);
+        Task<Product> UpdateProductAsync(int id, ProductCreateDto productDto);
+        Task<bool> DeleteProductAsync(int id);
     }
 }
-

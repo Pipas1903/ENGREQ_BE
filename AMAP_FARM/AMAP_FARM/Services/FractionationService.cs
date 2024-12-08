@@ -1,4 +1,5 @@
-﻿using AMAP_FARM.Models;
+﻿using AMAP_FARM.DTO;
+using AMAP_FARM.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMAP_FARM.Services
@@ -12,40 +13,56 @@ namespace AMAP_FARM.Services
             _context = context;
         }
 
-        public async Task<List<Fractionation>> GetAllFractionationsAsync()
+        public async Task<IEnumerable<Fractionation>> GetAllFractionationsAsync()
         {
             return await _context.Fractionations.ToListAsync();
         }
 
-        public async Task<Fractionation> GetFractionationByIdAsync(int fractionationId)
+        public async Task<Fractionation> GetFractionationByIdAsync(int id)
         {
-            return await _context.Fractionations
-                .FirstOrDefaultAsync(f => f.Id == fractionationId);
+            return await _context.Fractionations.FindAsync(id);
         }
 
-        public async Task CreateFractionationAsync(Fractionation fractionation)
+        public async Task<Fractionation> CreateFractionationAsync(FractionationCreateDto fractionationCreateDto)
         {
-            await _context.Fractionations.AddAsync(fractionation);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateFractionationAsync(Fractionation fractionation)
-        {
-            _context.Fractionations.Update(fractionation);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteFractionationAsync(int fractionationId)
-        {
-            var fractionation = await _context.Fractionations
-                .FirstOrDefaultAsync(f => f.Id == fractionationId);
-
-            if (fractionation != null)
+            var fractionation = new Fractionation
             {
-                _context.Fractionations.Remove(fractionation);
-                await _context.SaveChangesAsync();
+                Name = fractionationCreateDto.Name
+            };
+
+            _context.Fractionations.Add(fractionation);
+            await _context.SaveChangesAsync();
+
+            return fractionation;
+        }
+
+        public async Task<bool> UpdateFractionationAsync(int id, Fractionation fractionation)
+        {
+            var existingFractionation = await _context.Fractionations.FindAsync(id);
+            if (existingFractionation == null)
+            {
+                return false;
             }
+
+            existingFractionation.Name = fractionation.Name;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeleteFractionationAsync(int id)
+        {
+            var fractionation = await _context.Fractionations.FindAsync(id);
+            if (fractionation == null)
+            {
+                return false;
+            }
+
+            _context.Fractionations.Remove(fractionation);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }
-
